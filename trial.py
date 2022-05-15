@@ -1,11 +1,15 @@
+# Dependancies 
 import pygame as pg
 from pygame.locals import *
-import time, random, sys
+import random, sys
 
+# Initiate pygame 
 pg.init()
+
+# Initiate fonts
 pg.font.init()
 
-
+# Create a backgroud for the output screen 
 class Background(pg.sprite.Sprite):
     def __init__(self, image_file):
         pg.sprite.Sprite.__init__(self)  #call Sprite initializer
@@ -14,56 +18,54 @@ class Background(pg.sprite.Sprite):
         pg.display.flip()   
         self.rect = self.image.get_rect()
 
-
 #set up the output screen
 screen_width=960
 screen_height=600
 screen = pg.display.set_mode([screen_width, screen_height])
 pg.display.set_caption('Snake Game by Shivani')
-BackGround = Background('C:/Users/shiva/OneDrive/Documents/NYIT-MSDS-stuff/class-610-programming/Final-Project/Resources/bg-12.jpeg')
+bg_image = Background('C:/Users/shiva/OneDrive/Documents/NYIT-MSDS-stuff/class-610-programming/Final-Project/Resources/bg-12.jpeg')
 
-
+# One time font declaration 
 my_font = pg.font.SysFont('Calibri', 25, bold=True)
+
+# Frame Per Second(fps)
 clock = pg.time.Clock()
 
-
-# Defining Colors 
+# Define Colors 
 white = (255,255,255)
 red = (255,0,0)
 green = (0,255,0)
-blue = (0,0,255)
 maroon = (128,0,0)
 
-
-# Score
-def show_score(choice, color):
-    score_surface = my_font.render('Score: ' + str(score)  + '  &  Speed: ' + str(snake_speed), True, maroon)
+# Score display function
+def show_score(choice):
+    score_surface = my_font.render('Score: ' + str(score)  + '  &  Speed: ' + str(snake_speed), True, white)
     score_rect = score_surface.get_rect()
     if choice == 1:
-        score_rect.midtop = (screen_width/7.5, 15)
+        score_rect.midtop = (135, screen_height/1.05)
     else:
         score_rect.midtop = (screen_width/2, screen_height/1.25)
     screen.blit(score_surface, score_rect)
-    # pg.display.flip()
 
-# Game Over
+# Game over function - Display information when game is over
 def gover():
     gover_surface = my_font.render('Game Over!', True, maroon)
     gover_rect = gover_surface.get_rect()
     gover_rect.midtop = (screen_width/2, screen_height/4)
     screen.blit(gover_surface, gover_rect)
 
-    again = my_font.render("Play Again - Press 'P'",True, blue)
+    again = my_font.render("Play Again - Press 'P'",True, white)
     again_rect = again.get_rect()
     again_rect.midtop = (screen_width/2, screen_height/2.2)
     screen.blit(again, again_rect)
 
-    game_quit = my_font.render("Quit - Press 'Q'",True, blue)
+    game_quit = my_font.render("Quit - Press 'Q'",True, white)
     quit_rect = game_quit.get_rect()
     quit_rect.midtop = (screen_width/2, screen_height/2)
     screen.blit(game_quit, quit_rect)
 
-    show_score(0, red)
+    # Final display when game is over
+    show_score(0)
     pg.display.flip()
     while True:
         pg.display.update()
@@ -78,23 +80,24 @@ def gover():
                 pg.quit()
                 sys.exit()
 
-# Main logic
+# Main function to start the game 
 def main():
     global score, snake_speed
     score = 0
 
-    #Snake inforamation
+    # Snake inforamation
     snake_position = [100, 50]
     snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
     snake_speed = 10
     snake_direction = 'RIGHT'
     change_to = snake_direction
 
-    # fruit position
+    # Fruit random location
     food_pos = [random.randrange(1, (screen_width//10)) * 10,
                     random.randrange(1, (screen_height//10)) * 10]
     food_spawn = True
 
+    # Unlimited Loop begins for the whole game 
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -111,7 +114,7 @@ def main():
                     change_to = 'LEFT'
                 if event.key == pg.K_RIGHT or event.key == ord('d'):
                     change_to = 'RIGHT'
-                # Esc -> Create event to quit the game
+                # Create event to quit the game window by pressing 'Esc'
                 if event.key == pg.K_ESCAPE:
                     pg.event.post(pg.event.Event(pg.QUIT))
 
@@ -151,8 +154,8 @@ def main():
         food_spawn = True
 
         # GFX
-        screen.blit(BackGround.image, BackGround.rect)
-        BackGround.rect
+        screen.blit(bg_image.image, bg_image.rect)
+        bg_image.rect
         for pos in snake_body:
             # Snake body
             pg.draw.rect(screen, green, pg.Rect(pos[0], pos[1], 10, 10))
@@ -171,7 +174,7 @@ def main():
             if snake_position[0] == block[0] and snake_position[1] == block[1]:
                 gover()
 
-        show_score(1, white)
+        show_score(1)
         # Refresh game screen
         pg.display.update()
         # Refresh rate
