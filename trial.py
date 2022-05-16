@@ -103,7 +103,7 @@ def main():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
-            # Whenever a key is pressed down
+            # Assign arrow key events to WSAD keys 
             elif event.type == pg.KEYDOWN:
                 # W -> Up; S -> Down; A -> Left; D -> Right
                 if event.key == pg.K_UP or event.key == ord('w'):
@@ -114,11 +114,11 @@ def main():
                     change_to = 'LEFT'
                 if event.key == pg.K_RIGHT or event.key == ord('d'):
                     change_to = 'RIGHT'
-                # Create event to quit the game window by pressing 'Esc'
+                # Create event to close the game window by pressing 'Esc'
                 if event.key == pg.K_ESCAPE:
                     pg.event.post(pg.event.Event(pg.QUIT))
 
-        # Making sure the snake cannot move in the opposite direction instantaneously
+        # Define Snake's movement and direction 
         if change_to == 'UP' and snake_direction != 'DOWN':
             snake_direction = 'UP'
         if change_to == 'DOWN' and snake_direction != 'UP':
@@ -128,7 +128,7 @@ def main():
         if change_to == 'RIGHT' and snake_direction != 'LEFT':
             snake_direction = 'RIGHT'
 
-        # Moving the snake
+        # Move the snake based on coordinates 
         if snake_direction == 'UP':
             snake_position[1] -= 10
         if snake_direction == 'DOWN':
@@ -138,7 +138,7 @@ def main():
         if snake_direction == 'RIGHT':
             snake_position[0] += 10
 
-        # Snake body growing mechanism
+        # Snake body, score and speed mechanism
         snake_body.insert(0, list(snake_position))
         if snake_position[0] == food_pos[0] and snake_position[1] == food_pos[1]:
             score += 1
@@ -153,7 +153,7 @@ def main():
             food_pos = [random.randrange(1, (screen_width//10)) * 10, random.randrange(1, (screen_height//10)) * 10]
         food_spawn = True
 
-        # GFX
+        # Display incresed size of snake body  render background image 
         screen.blit(bg_image.image, bg_image.rect)
         bg_image.rect
         for pos in snake_body:
@@ -163,20 +163,24 @@ def main():
         # Snake food
         pg.draw.rect(screen, red, pg.Rect(food_pos[0], food_pos[1], 10, 10))
 
-        # Game Over conditions
-        # Getting out of bounds
+        # Game Over condition if snake touches the boundaries
         if snake_position[0] < 0 or snake_position[0] > screen_width-10:
             gover()
         if snake_position[1] < 0 or snake_position[1] > screen_height-10:
             gover()
-        # Touching the snake body
+        # Game Over condition if snake touches itself
         for block in snake_body[1:]:
             if snake_position[0] == block[0] and snake_position[1] == block[1]:
                 gover()
 
+
+        # Disply score and speed on game screen 
         show_score(1)
+
+    
         # Refresh game screen
         pg.display.update()
+
         # Refresh rate
         clock.tick(snake_speed)
 
